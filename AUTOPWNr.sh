@@ -16,15 +16,19 @@ echo -e "\e[0;33m                      ⚠️  FOR LAB USE ONLY ⚠️ \e[0m"
 echo ""
 sleep 1
 
-REQUIRED_TOOLS=("nmap" "curl" "python3" "searchsploit" "grep" "awk" "metasploit-framework" "msfconsole")
+REQUIRED_TOOLS=("nmap" "curl" "python3" "searchsploit" "grep" "awk" "msfconsole")
 
 check_dependencies() {
     echo "Checking dependencies........"
     for tool in "${REQUIRED_TOOLS[@]}"; do
         if ! command -v "$tool" &> /dev/null; then
             echo -e "\e[1;31mError: $tool is not installed. Please install it before running this script.\e[0m"
+            missing=1
         fi
     done
+    if [ -z "$missing" ]; then
+        echo -e "\e[1;32mAll required tools are installed.\e[0m"
+    fi
 }
 
 check_dependencies
