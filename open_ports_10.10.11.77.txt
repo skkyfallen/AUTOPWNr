@@ -1,0 +1,2 @@
+Port: 22, Service: ssh, Version: OpenSSH 9.6p1 Ubuntu 3ubuntu13.12
+Port: 80, Service: http, Version: nginx 1.24.0

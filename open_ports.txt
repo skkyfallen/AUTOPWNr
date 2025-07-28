@@ -1,0 +1,2 @@
+Port: 22, Service: ssh, Version: OpenSSH 8.2p1 Ubuntu 4ubuntu0.1
+Port: 80, Service: http, Version: Apache httpd 2.4.41
