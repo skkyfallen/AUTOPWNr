@@ -3,16 +3,16 @@ Port: 111, Service: rpcbind, Version:  2
 Port: 139, Service: netbios-ssn, Version: Samba smbd 3.X - 4.X
 Port: 1524, Service: bindshell, Version: Metasploitable root shell 
 Port: 2049, Service: nfs, Version:  2-4
-Port: 2121, Service: ftp, Version: ProFTPD 1.3.1
+Port: 2121, Service: ccproxy-ftp, Version:  
 Port: 21, Service: ftp, Version: vsftpd 2.3.4
 Port: 22, Service: ssh, Version: OpenSSH 4.7p1 Debian 8ubuntu1
 Port: 23, Service: telnet, Version: Linux telnetd 
 Port: 25, Service: smtp, Version: Postfix smtpd 
-Port: 3306, Service: mysql, Version: MySQL 5.0.51a-3ubuntu5
+Port: 3306, Service: mysql, Version:  
 Port: 445, Service: netbios-ssn, Version: Samba smbd 3.X - 4.X
-Port: 512, Service: exec, Version: netkit-rsh rexecd 
+Port: 512, Service: exec, Version:  
 Port: 513, Service: login, Version:  
-Port: 514, Service: shell, Version: Netkit rshd 
+Port: 514, Service: shell, Version:  
 Port: 53, Service: domain, Version: ISC BIND 9.4.2
 Port: 5432, Service: postgresql, Version: PostgreSQL DB 8.3.0 - 8.3.7
 Port: 5900, Service: vnc, Version: VNC 

